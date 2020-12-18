@@ -71,7 +71,7 @@
   import mo from 'moment'
 
   export default {
-    name: 'WeekView',
+    name: 'WeekView1',
     components: {
 
     },
