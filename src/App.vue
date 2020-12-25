@@ -23,12 +23,18 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-row>
+        <!--<v-row>
           <v-col>
             <highlightjs
               autodetect
-              language="javascript"
               :code="code" />
+          </v-col>
+        </v-row>-->
+        <v-row>
+          <v-col>
+            <pre><code
+class="plaintext"
+            v-html="code" /></pre>
           </v-col>
         </v-row>
       </v-container>
@@ -41,6 +47,8 @@
   import Week from './components/calendar/views/Week';
   import DescriptionInput from './components/text/DescriptionInput';
   import PostPreview from './components/PostPreview';
+  import { Post } from './models';
+  // import hljs from 'highlight.js'
 
   export default {
     name: 'App',
@@ -52,23 +60,14 @@
     },
 
     data: () => ({
-      post: {
-        text: '1,000 miles of wonder'
-      },
-      code: `events: [
-        { date: moment().startOf('week').format() },
-        { date: moment().startOf('week').add(1, 'day').format() },
-        { date: moment().startOf('week').add(2, 'day').format() },
-        { date: moment().startOf('week').add(2, 'day').format() },
-        { date: moment().startOf('week').add(2, 'day').format() },
-        { date: moment().startOf('week').add(2, 'day').format() },
-        { date: moment().startOf('week').add(2, 'day').format() },
-        { date: moment().startOf('week').add(2, 'day').format() },
-        { date: moment().startOf('week').add(2, 'day').format() },
-        { date: moment().startOf('week').add(2, 'day').format() },
-        { date: moment().startOf('week').add(3, 'day').format() },
-        { date: moment().startOf('week').add(4, 'day').format() },
-      ];`,
+      post: new Post(),
+      code: `import Vue from 'vue';
+import Vuetify from 'vuetify/lib/framework';
+
+Vue.use(Vuetify);
+
+export default new Vuetify({
+});`,
       weekStart: moment().startOf('week').format(),
       events: [
         { date: moment().startOf('week').format() },
@@ -84,10 +83,27 @@
         { date: moment().startOf('week').add(3, 'day').format() },
         { date: moment().startOf('week').add(4, 'day').format() },
       ]
-
     }),
+    mounted() {
+      //debugger
+      document.querySelectorAll('pre code').forEach((block) => {
+      // hljs.highlightBlock(block);
+      });
+    },
     methods: {
       async test() {
+
+        // const forEscape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+        //
+        // const escape = (text) => {
+        //   forEscape.forEach((char) => {
+        //     text = text.replace(new RegExp(`(?<!\\\\)\\${char}`, 'g'), `\\${char}`)
+        //   })
+        //   return text
+        // }
+
+        //  console.log(escape(this.post.text))
+
         const response = await fetch('http://localhost:3300/api/post', {
           method: 'POST', // *GET, POST, PUT, DELETE, etc.
           // mode: 'cors', // no-cors, *cors, same-origin
@@ -99,9 +115,12 @@
           },
           // redirect: 'follow', // manual, *follow, error
           // referrerPolicy: 'no-referrer', // no-referrer, *client
-          body: JSON.stringify(this.post) // body data type must match "Content-Type" header
+          body: JSON.stringify({
+            // text: /*escape(*/this.post.text//)
+            text: this.post.markdown
+          }) // body data type must match "Content-Type" header
         });
-        return await response.json();
+        // return await response.json();
       }
     }
   };
