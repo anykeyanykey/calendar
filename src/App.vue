@@ -9,10 +9,12 @@
     <v-main class="">
       <v-container>
         <v-row>
-          <v-col>
-            <DescriptionInput v-model="post.text" />
+          <v-col cols="6">
+            <PostConstructor
+              :post="post"
+              @change="post.text = $event" />
           </v-col>
-          <v-col>
+          <v-col cols="6">
             <PostPreview :post="post" />
           </v-col>
         </v-row>
@@ -30,13 +32,13 @@
               :code="code" />
           </v-col>
         </v-row>-->
-        <v-row>
+        <!--<v-row>
           <v-col>
             <pre><code
 class="plaintext"
             v-html="code" /></pre>
           </v-col>
-        </v-row>
+        </v-row>-->
       </v-container>
     </v-main>
   </v-app>
@@ -45,29 +47,26 @@ class="plaintext"
 <script>
   import moment from 'moment'
   import Week from './components/calendar/views/Week';
-  import DescriptionInput from './components/text/DescriptionInput';
+
   import PostPreview from './components/PostPreview';
   import { Post } from './models';
+
+  import PostConstructor from './components/PostConstructor';
   // import hljs from 'highlight.js'
 
   export default {
     name: 'App',
 
     components: {
+      PostConstructor,
+
       Week,
-      DescriptionInput,
+
       PostPreview
     },
 
     data: () => ({
       post: new Post(),
-      code: `import Vue from 'vue';
-import Vuetify from 'vuetify/lib/framework';
-
-Vue.use(Vuetify);
-
-export default new Vuetify({
-});`,
       weekStart: moment().startOf('week').format(),
       events: [
         { date: moment().startOf('week').format() },

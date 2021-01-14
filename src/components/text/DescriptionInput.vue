@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div style="white-space: nowrap">
+    <div
+      style="white-space: nowrap"
+      class="mb-4">
       <v-btn
         small
         class="mr-3"
@@ -53,6 +55,7 @@
       <v-textarea
         ref="textarea"
         v-model="valueI"
+        outlined
         counter="100"
         placeholder="Post text"
         @input="$emit('input', $event)"
@@ -67,12 +70,18 @@
   export default {
     name: 'DescriptionInput',
     components: {},
-    props: ['value'],
+    props: {
+      post: {
+        type: Object,
+        required: true
+      }
+    },
+    // props: ['value'],
     data: () => ({
       valueI: '',
     }),
     created() {
-      this.valueI = this.value
+      this.valueI = this.post.text
     },
     methods: {
       makeBold() {

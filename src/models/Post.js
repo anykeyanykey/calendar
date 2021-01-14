@@ -2,19 +2,21 @@ import _ from 'lodash'
 
 const forEscape = ['_', '*', '[', ']', '(', ')', '~', '`', /*'>', '#', '+', '-', '=', '|', '{', '}', '.', '!'*/]
 const useful = ['_', '*', '[', ']', '(', ')', '~', '`']
-const aRegExp = /(?<!\\)\[(.*?)\]\((.*)(?<!\\)\)/g
-const preRegExp = /(?<!\\)`{3}((?:.|\n)*?)(?<!\\)`{3}/g
-const codeRegExp = /(?<!\\)`{1}((?:.|\n)*?)(?<!\\)`{1}/g
-const bRegExp = /(?<!\\)\*((?:.|\n)*?)(?<!\\)\*/g
-const sRegExp = /(?<!\\)~((?:.|\n)*?)(?<!\\)~/g
-const iRegExp = /(?<!\\)_{1}((?:.|\n)*?)(?<!\\)_{1}/g
-const uRegExp = /(?<!\\)_{2}((?:.|\n)*?)(?<!\\)_{2}/g
-const iuRegExp = /(?<!\\)_{3}((?:.|\n)*?)(?<!\\)_{3}/g
+const aRegExp = /(?<!\\)\[(.+?)\]\((.+?)(?<!\\)\)/g
+const preRegExp = /(?<!\\)`{3}((?:.|\n)+?)(?<!\\)`{3}/g
+const codeRegExp = /(?<!\\)`{1}((?:.|\n)+?)(?<!\\)`{1}/g
+const bRegExp = /(?<!\\)\*((?:.|\n)+?)(?<!\\)\*/g
+const sRegExp = /(?<!\\)~((?:.|\n)+?)(?<!\\)~/g
+const iRegExp = /(?<!\\)_{1}((?:.|\n)+?)(?<!\\)_{1}/g
+const uRegExp = /(?<!\\)_{2}((?:.|\n)+?)(?<!\\)_{2}/g
+const iuRegExp = /(?<!\\)_{3}((?:.|\n)+?)(?<!\\)_{3}/g
 
 export class Post {
 	text
 
 	type = 'text' // animation
+
+	rows = [[{ text: 'blabla' }, { text: 'blabla' }, { text: 'blabla' }], [{ text: 'blabla' }]]
 
 	get textMaxLength() {
 		switch (this.type) {
@@ -64,13 +66,25 @@ export class Post {
 			.replace(iuRegExp, (a1, a2) => `___${a2}_\r__`)
 	}
 
+	// get hasError() {
+	// 	const markdown = this.markdown
+	// 	const clean = useful
+	// 		.reduce((text, char) => text.replace(new RegExp(`\\${char}`, 'g'), ''), markdown)
+	// 	return markdown && (useful.some((char) =>
+	// 			!!(((markdown.match(new RegExp(`\\${char}`, 'g')) || []).length -
+	// 				(markdown.match(new RegExp(`\\\\\\${char}`, 'g')) || []).length) % 2)) || !clean.length)
+	// }
+
 	get hasError() {
-		const markdown = this.markdown
-		const clean = useful
-			.reduce((text, char) => text.replace(new RegExp(`\\${char}`, 'g'), ''), markdown)
-		return markdown && (useful.some((char) =>
-				!!(((markdown.match(new RegExp(`\\${char}`, 'g')) || []).length -
-					(markdown.match(new RegExp(`\\\\\\${char}`, 'g')) || []).length) % 2)) || !clean.length)
+		const replaced = _.trim(this.text)
+			.replace(bRegExp, (a1, a2) => `@${_.trim(a2)}@`)
+			.replace(uRegExp, (a1, a2) => `@${_.trim(a2)}@`)
+			.replace(iRegExp, (a1, a2) => `@${_.trim(a2)}@`)
+			.replace(sRegExp, (a1, a2) => `@${_.trim(a2)}@`)
+			.replace(preRegExp, (a1, a2) => `@${_.trim(a2)}@`)
+			.replace(codeRegExp, (a1, a2) => `@${_.trim(a2)}@`)
+			.replace(aRegExp, (a1, a2, a3) => `@${_.trim(a3)}-${_.trim(a2)}@`)
+		return useful.some((char) => replaced.indexOf(char) > -1)
 	}
 
 	constructor() {

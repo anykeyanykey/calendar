@@ -1,41 +1,42 @@
 <template>
-  <v-card
-    class="preview-card"
-    max-width="344">
-    <v-img
-      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-      height="200px" />
+  <div>
+    <v-card
+      class="preview-card">
+      <v-img
+        src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+        height="200px" />
 
-    <!-- <v-card-title>
-      Top western road trips
-    </v-card-title>-->
-
-    <v-card-subtitle>
+      <v-card-subtitle>
+        <div
+          v-if="!hasError"
+          class="preview-text"
+          v-html="post.html" />
+        <v-alert
+          v-else
+          class="ma-0"
+          dense
+          outlined
+          type="error">
+          Markdown error!
+        </v-alert>
+      </v-card-subtitle>
+    </v-card>
+    <div
+      v-for="(row,i) in post.rows"
+      :key="i"
+      style="margin: 0 -6px"
+      class="d-flex flex-row mt-3">
       <div
-        v-if="!hasError"
-        class="preview-text"
-        v-html="post.html" />
-      <v-alert
-        v-else
-        class="ma-0"
-        dense
-        outlined
-        type="error">
-        Markdown error!
-      </v-alert>
-    </v-card-subtitle>
-
-    <!--<v-card-text>
-      <v-alert
-        v-if="error"
-        dense
-        outlined
-        type="error"
-      >
-        Markdown error!
-      </v-alert>
-    </v-card-text>-->
-  </v-card>
+        v-for="(column, k) in row"
+        :key="k"
+        style="margin: 0 6px"
+        class="flex-grow-1">
+        <v-btn block>
+          {{ column.text }}
+        </v-btn>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
