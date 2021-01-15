@@ -1,6 +1,7 @@
 <template>
   <v-file-input
     show-size
+    accept="image/*"
     truncate-length="15"
   />
 </template>
